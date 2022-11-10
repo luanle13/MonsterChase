@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     private float _maxX;
 
     private float _movementX;
+    private bool _isGrounded = true;
     private Rigidbody2D _rigidbody;
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
@@ -39,6 +40,11 @@ public class Player : MonoBehaviour
     {
         PlayerMoveKeyboard();
         AnimatePlayer();
+        PlayerJump();
+    }
+
+    private void FixedUpdate()
+    {
     }
 
     void PlayerMoveKeyboard()
@@ -59,6 +65,23 @@ public class Player : MonoBehaviour
         } else
         {
             _animator.SetBool(WALK_ANIMATION, false);
+        }
+    }
+
+    void PlayerJump()
+    {
+        if (Input.GetButtonDown("Jump") && _isGrounded)
+        {
+            _rigidbody.AddForce(new Vector2(0f, _jumpForce), ForceMode2D.Impulse);
+            _isGrounded = false;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag(GROUND_TAG))
+        {
+            _isGrounded = true;
         }
     }
 }
